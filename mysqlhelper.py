@@ -252,3 +252,72 @@ class MySqlHelper:
         return res, [i[0] for i in self.cursor.description]
 
 
+if __name__ == '__main__':
+    # Test of MySqlHelper
+    print("Build up a connection and cursor.")
+    dial = MySqlHelper(user='root', password='11235HHe')
+    print("Create a database 'people', use this database.")
+    dial.create_database('people')
+    dial.use_database('people')
+
+
+    print("Table in this database now: ",dial.show_tables())
+    print("Create a table 'student':")
+    dial.create_table('student',
+                  {'name':'varchar(16) not null',
+                   'height':'decimal(3,2)'},
+                  add_id_col=True)
+    print("Column information:",*(dial.table_info('student')), sep='\n')
+    print("Table in this database now: ",dial.show_tables())
+
+
+    print("Insert a new column 'age'.")
+    dial.insert('student','age','int')
+    print("Column information:",*(dial.table_info('student')), sep='\n')
+
+    print("Delete the column 'age'.")
+    dial.drop_column('student','age')
+    print("Column information:",*(dial.table_info('student')), sep='\n')
+
+    print("Modify data type of column 'height'.")
+    dial.modify_column('student','height','decimal(5,2)')
+    print("Column information:",*(dial.table_info('student')), sep='\n')
+
+
+    print("Insert data to the table.")
+    dial.append('student',
+            column_names=['name','height'],
+            values=[
+                ('Jason',172),
+                ('Alice',158),
+                ('Bob',175.1),
+                ('Nick',182),
+                ('Mary',173.5),
+                ('Tina',167)
+            ])
+    dat, col = dial.select('student')
+    print(col, *dat, sep='\n')
+
+    print("Delete data with height>=180.")
+    dial.drop_row('student', where='height >= %s', where_params=(180,))
+    dat, col = dial.select('student')
+    print(col, *dat, sep='\n')
+
+    print("Modify height of Richard to 180.")
+    dial.modify_row_data('student',{'height':180},where='name = %s',where_params=('Richard',))
+    dat, col = dial.select('student')
+    print(col, *dat, sep='\n')
+
+    print("Get rows of data with height<173, order by height.")
+    dat, col = dial.select('student',('name','height'),
+                       where='height<%s',where_params=(173,),
+                       sort_col='height',asc_sort=True)
+    print(col, *dat, sep='\n')
+
+
+    print("Delete the table 'student'.")
+    dial.delete_table('student')
+    print("Table in this database now: ",dial.show_tables())
+
+    print("Close the cursor and connection.")
+    dial.close()
