@@ -41,8 +41,33 @@ class MySqlHelper:
 
     def table_info(self, tbl_name):
         return self._query_('desc %s' % tbl_name)
+    
+    @classmethod
+    def Type_Transform(cls, type_list, setting_apd=None):
+        type_comm = [''] * len(type_list)
+        if not setting_apd:
+            setting_apd = [''] * len(type_list)
 
-    def create_table(self, table_name, column_setting, add_id_col=False):
+        for i,typ in enumerate(type_list):
+            if typ == str:
+                type_comm[i] = 'varchar'
+            elif typ == int:
+                type_comm[i] = 'int'
+            elif typ == float:
+                type_comm[i] = 'float'
+            elif isinstance(typ, str):
+                type_comm[i] = typ
+        
+        for i,apd in enumerate(setting_apd):
+            if isinstance(apd,str):
+                if len(apd) > 0 and (not apd[0]=='('):
+                    setting_apd[i] = ' ' + apd
+            else:
+                setting_apd[i] = ''
+        
+        return list(map(lambda x,y: x+y, type_comm, setting_apd))
+
+    def create_table(self, table_name, column_setting, add_id_col=False, id_name='id'):
         """Create a table in the database.
         
         Args:
@@ -50,8 +75,8 @@ class MySqlHelper:
                 The name of the table to be created.
             column_setting: dict
                 The keys are the names of the columns, the values are the attributes
-                of the corresponding columns (should write in SQL gramma: datatype 
-                [not null] [default %value] [primary key] [auto_increment]).
+                of the corresponding columns (should be written in SQL gramma: 
+                <datatype> [not null] [default %value] [primary key] [auto_increment]).
             add_index: bool, default false
                 If true, a column of int would be addtionaly created, setted as 
                 a primary key and has auto_increment attribute.
@@ -61,7 +86,8 @@ class MySqlHelper:
         
         comm = 'create table if not exists %s (' % table_name
 
-        column_describe = '`id` int unsigned not null primary key auto_increment'\
+        column_describe = '`%s` int unsigned not null' \
+                            ' primary key auto_increment' % id_name\
                             if add_id_col else ''
         for name, attr in column_setting.items():
             column_describe += (', `%s` %s' % (name, attr))
@@ -255,7 +281,7 @@ class MySqlHelper:
 if __name__ == '__main__':
     # Test of MySqlHelper
     print("Build up a connection and cursor.")
-    dial = MySqlHelper(user='root', password='11235HHe')
+    dial = MySqlHelper(user='root', password='root')
     print("Create a database 'people', use this database.")
     dial.create_database('people')
     dial.use_database('people')
