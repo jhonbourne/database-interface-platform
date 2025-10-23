@@ -3,4 +3,6 @@ A platform for data query and visualization.
 # Dependencies
 python >= 3.6
 
-pymysql
+pymysql (for MySQL interface)
+
+lxml (for spyder)
