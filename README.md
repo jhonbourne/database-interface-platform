@@ -1,8 +1,8 @@
 # database-interface-platform
 A platform for data query and visualization.
 # Dependencies
-python >= 3.6
+python >= 3.8
 
 pymysql (for MySQL interface)
 
-lxml (for spyder)
+lxml (for spider)
