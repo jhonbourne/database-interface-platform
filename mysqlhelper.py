@@ -87,10 +87,11 @@ class MySqlHelper:
         comm = 'create table if not exists %s (' % table_name
 
         column_describe = '`%s` int unsigned not null' \
-                            ' primary key auto_increment' % id_name\
+                            ' primary key auto_increment, ' % id_name\
                             if add_id_col else ''
         for name, attr in column_setting.items():
-            column_describe += (', `%s` %s' % (name, attr))
+            column_describe += ('`%s` %s, ' % (name, attr))
+        column_describe = column_describe[:-2] # remove the ', ' in the end
         
         comm = comm + column_describe + ') default charset=utf8'
         print('Execute command: '+comm)
