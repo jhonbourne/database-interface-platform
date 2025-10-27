@@ -2,6 +2,28 @@ from lxml import etree
 import time
 from spider_utils import SpiderRequest, SqlPipeline
 
+get_BaiduTopsearch_url = ("https://top.baidu.com/board?",{'tab':'realtime'})
+
+class Xpaths(object):
+    extract_topics = '//div[@class="category-wrap_iQLoo horizontal_1eKyQ"]'
+    # xpath under topics:
+    extract_content = '//div[@class="content_1YWBm"]'
+    extract_hot_index = '//div[@class="hot-index_1Bl1a"]'
+    # xpath under a content:
+    extract_title = '//div[@class="c-single-text-ellipsis"]'
+    extract_abstracts_large = '//div[contains(@class,' \
+    '"hot-desc_1m_jR large_nSuFU ")]' # All long abstracts
+
+    @classmethod
+    def Parse(cls, etree_ele, xpath_str, is_sub=True, get_text=True, unpack=True):
+        # encapsulated function of get parse content when using lxml
+        prefix = '.' if is_sub else ''
+        suffix = '/text()' if get_text else ''
+        content = etree_ele.xpath(prefix + xpath_str + suffix)
+        if unpack:
+            content = content[0]
+        return content
+
 class Item(object):
     def __init__(self):
         self.title = ""
@@ -19,15 +41,14 @@ class Item(object):
                 ,'hot_index':'int unsigned not null'}
 
 class Spider(object):
-    def __init__(self, url="https://top.baidu.com/board?", **kwargs):
+    def __init__(self, url, **kwargs):
         self.url = url
-        if not 'tab' in kwargs.keys():
-            kwargs['tab'] = 'realtime'        
         self.kwargs = kwargs
             
     def work(self):
         response = SpiderRequest.Put_Request(url=self.url, method='get', **self.kwargs)
         # print(response.url)
+        # self.save_html(response)
         header_names, dat_list = self.parse(response)
 
         pipline = SqlPipeline()
@@ -44,19 +65,20 @@ class Spider(object):
         html_string = response.text
         root = etree.HTML(html_string)
         # Get topic list of top search
-        div_list = root.xpath('//div[@class="category-wrap_iQLoo horizontal_1eKyQ"]')
+        div_list = Xpaths.Parse(root, Xpaths.extract_topics
+                                , is_sub=False, get_text=False, unpack=False)
         # Parse content of each top search
         dat_list = []
         for i, div in enumerate(div_list):
             if i < top_rank:
                 item = Item()
-                content = div.xpath('.//div[@class="content_1YWBm"]')[0]
-                item.title = content.xpath('.//div[@class=' \
-                '"c-single-text-ellipsis"]/text()')[0].strip()
-                item.abstract = content.xpath('.//div[contains(@class,' \
-                '"hot-desc_1m_jR large_nSuFU ")]/text()')
-                item.abstract = max(item.abstract,key=len).strip()
-                item.hot_index = int(div.xpath('.//div[@class="hot-index_1Bl1a"]/text()')[0])
+                content = Xpaths.Parse(div, Xpaths.extract_content
+                                       , get_text=False)
+                item.title = Xpaths.Parse(content, Xpaths.extract_title).strip()
+                item.abstract = Xpaths.Parse(content, Xpaths.extract_abstracts_large
+                                             ,unpack=False)
+                item.abstract = max(item.abstract,key=len).strip() # Filter different segments of a content
+                item.hot_index = int(Xpaths.Parse(div,Xpaths.extract_hot_index))
                 # Organize the data
                 dat_row = item.output_data()[1]
                 dat_list.append(dat_row)
@@ -73,5 +95,6 @@ class Spider(object):
             f.write(html_string)
 
 if __name__ == '__main__':
-    spider = Spider()
+    spider = Spider(url=get_BaiduTopsearch_url[0]
+                    ,**get_BaiduTopsearch_url[1])
     spider.work()

@@ -3,7 +3,8 @@ from mysqlhelper import MySqlHelper
 
 class Settings(object):
     HEADERS = {
-        'user_agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0'
+        'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0'
+
     }
 
     LOGNAME = ''
@@ -26,11 +27,11 @@ class SpiderRequest(object):
         return res
 
     @classmethod
-    def Put_Request(cls, url, method, **kwargs):
+    def Put_Request(cls, url, method, headers=Settings.HEADERS, **kwargs):
         if method == 'get':
-            res =  requests.get(url=url, params=kwargs, headers=Settings.HEADERS)
+            res =  requests.get(url=url, params=kwargs, headers=headers)
         elif method == 'post':
-            res =  requests.post(url=url, data=kwargs, headers=Settings.HEADERS)
+            res =  requests.post(url=url, data=kwargs, headers=headers)
         else:
             raise ValueError("Please use valid name of request method.")
         
