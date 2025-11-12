@@ -1,0 +1,31 @@
+/* Styles for the TablePanel MenuButton component */
+
+/* Wrapper keeps the menu sticky within the layout */
+.menu-wrapper {
+  position: sticky;
+  top: 24px;
+  align-self: flex-start; /* works when parent is a flex container */
+}
+
+/* target the Ant Menu instance used here */
+.data-menu {
+  width: 200px;
+}
+
+/* reduce vertical padding and let item height grow for wrapped labels */
+.data-menu.ant-menu-inline .ant-menu-item {
+  height: auto !important;
+  padding-top: 6px !important;
+  padding-bottom: 6px !important;
+}
+
+.data-menu.ant-menu-inline .ant-menu-item .ant-menu-title-content {
+  white-space: normal !important;
+  word-break: break-word !important;
+  line-height: 1.15 !important; /* tighter line gap */
+}
+
+.table-menu.ant-menu-inline .ant-menu-item .ant-menu-title-content .menu-label {
+  margin: 0 !important;
+  padding: 0 !important;
+}
