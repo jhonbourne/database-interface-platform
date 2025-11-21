@@ -1,6 +1,6 @@
 from lxml import etree
 import time
-from spider_utils import SpiderRequest, SqlPipeline
+from spiders.spider_utils import SpiderRequest, SqlPipeline
 
 get_DoubanTopmovie_url = ("https://movie.douban.com/top250?"
                           ,{'start':0 # Start rank shown in the page. 0 means top1 movie
@@ -70,7 +70,7 @@ class Spider(object):
         tbl_name = 'DoubanTopmovies_'+realtime
         pipline.create_table(tbl_name,
                              column_setting=Item.dtype4sql())
-        pipline.write_data(tbl_name, header_names, dat_list)
+        pipline.write_data(tbl_name, header_names, dat_merge)
         print(pipline.dial.select(tbl_name))
         # pipline.dial.delete_table(tbl_name)
 

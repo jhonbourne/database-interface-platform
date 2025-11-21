@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import {URLS} from '../urls';
 import MenuButton from "./MenuButton";
-import DataBoard from "./DataBoard";
+import WordCloudDiagram from "./WordCloudDiagram";
 
 import { Layout, theme } from 'antd';
 const { Sider, Content } = Layout;
@@ -74,11 +74,10 @@ function Navigator(props){
                         borderRadius: borderRadiusLG
                     }}
                 >
-                    <DataBoard
+                    <WordCloudDiagram
                         info={tableres}
-                        rowHeight={48}
                     />
-                </Content>            
+                </Content>
             </Layout>
         </Layout>
     )

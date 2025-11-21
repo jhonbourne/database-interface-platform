@@ -1,17 +1,9 @@
 from flask import Blueprint, request, jsonify
-from mapper.mysqlhelper import MySqlHelper
+from .services.word_statistic import WordStatistic
+from .services.get_menu import get_menu
 
 bp = Blueprint('debug',__name__)
 
-get_database_pwd = {
-    'root': 'root'
-}
-def authority_check():
-    user_name = 'root'
-    return user_name, get_database_pwd[user_name]
-
-def get_database4src(path):
-    return 'spider'
 
 class Message(object):
     def __init__(self):
@@ -24,27 +16,25 @@ class Message(object):
         return jsonify(self.__dict__)
 
 @bp.route('/data')
-def get_tables():
-    user, pwd = authority_check()
+def get_menu_options():
     msg = Message()
-    with MySqlHelper(user=user, password=pwd,
-                     database=get_database4src(request.path)) as dial:
-        msg.data = [t[0] for t in dial.show_tables()]
-        print(msg.get_msg())
+    msg.data = get_menu(request.path)
+    print(msg.get_msg())
     return msg.get_msg()
 
 @bp.route('/data/<string:tablename>')
 def get_table_data(tablename):
-    user, pwd = authority_check()
     msg = Message()
-    with MySqlHelper(user=user, password=pwd,
-                     database=get_database4src(request.path)) as dial:
-        try:
-            msg.data, msg.columns = dial.select(tablename)
-        except Exception as e:
-            msg.success = False
-            msg.status = str(e)
-        print(msg.get_msg())
+    try:
+        ws = WordStatistic(name=tablename, path=request.path)
+        ws.word_cut()
+        tmp_data = ws.word_count()
+        msg.data = [{'name':k,'value': v} for k, v in tmp_data.items()]
+        msg.columns = ('word_freq',)
+    except Exception as e:
+        msg.success = False
+        msg.status = str(e)    
+    
     return msg.get_msg()
 
 @bp.route('/test_get',methods=['GET'])

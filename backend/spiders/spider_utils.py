@@ -1,5 +1,5 @@
 import requests
-from backend.mapper.mysqlhelper import MySqlHelper
+from repositories.mysqlhelper import MySqlHelper
 
 class Settings(object):
     HEADERS = {
