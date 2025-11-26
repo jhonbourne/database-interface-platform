@@ -1,5 +1,5 @@
 from repositories.database_info import *
-from repositories.mysqlhelper import MySqlHelper
+from utils.mysqlhelper import MySqlHelper
 
 def get_menu(path):
     user, pwd = authority_check()

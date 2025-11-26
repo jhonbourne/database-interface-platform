@@ -1,6 +1,6 @@
 from lxml import etree
 import time
-from spider_utils import SpiderRequest, SqlPipeline
+from backend.utils.spider_utils import SpiderRequest, SqlPipeline
 
 get_BaiduTopsearch_url = ("https://top.baidu.com/board?",{'tab':'realtime'})
 

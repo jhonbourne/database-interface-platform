@@ -1,0 +1,15 @@
+body {
+  text-align: center;
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.app-header-title {
+  font-weight: bold;
+  font-size: 1.2em;
+  color: #fff;
+}

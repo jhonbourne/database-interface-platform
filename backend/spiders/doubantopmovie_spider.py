@@ -1,6 +1,6 @@
 from lxml import etree
 import time
-from spiders.spider_utils import SpiderRequest, SqlPipeline
+from backend.utils.spider_utils import SpiderRequest, SqlPipeline
 
 get_DoubanTopmovie_url = ("https://movie.douban.com/top250?"
                           ,{'start':0 # Start rank shown in the page. 0 means top1 movie

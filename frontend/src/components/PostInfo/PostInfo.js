@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import InfoForm from './InfoForm';
 import InfoBoard from './InfoBoard';
-import {URLS} from '../urls';
+import {URLS} from '../../utils/request_urls';
+import { requestSettings } from '../../utils/request_settings';
 
 function PostInfo (props) {
     // Set states
@@ -22,13 +23,9 @@ function PostInfo (props) {
         // Request url
         const url = URLS['PostInfo'];
 
-        fetch(url+'?'+post.param
-            ,{
-                method: "POST"
-                ,headers: {"Content-Type": "application/json"}
-                // ,body: JSON.stringify({foo:"bar"})
-                ,body: JSON.stringify(eval("("+post.body+")"))
-            })
+        const settings = { ...requestSettings, method: 'POST',
+             body: JSON.stringify(eval("("+post.body+")")) };
+        fetch(url+'?'+post.param, settings)
             .then(response => response.json())
             .then( data => {
                 setResult({
@@ -37,7 +34,7 @@ function PostInfo (props) {
                 });
             }
                 )
-            .catch(error => {console.error("Request error",error)})
+            .catch(error => {console.error("Request error: ",error)})
         // setResult({
         //     body: post.body
         //     ,param: post.param

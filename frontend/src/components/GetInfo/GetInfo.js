@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import QueryForm from './QueryForm';
 import ResultBoard from './ResultBoard';
-import {URLS} from '../urls';
+import {URLS} from '../../utils/request_urls';
+import { requestSettings } from '../../utils/request_settings';
 
 function GetInfo (props) {
     // Set states
@@ -15,8 +16,7 @@ function GetInfo (props) {
         // Request url
         const url = URLS['GetInfo'];
 
-        fetch(url+'?'+query
-            ,{method: "GET"})
+        fetch(url+'?'+query, requestSettings)
             .then(response => response.json())
             .then(data => setResult(data.result))
         // setResult("Return "+ query);

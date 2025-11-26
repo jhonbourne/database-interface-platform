@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import {URLS} from '../urls';
+import {URLS} from '../../utils/request_urls';
+import { requestSettings } from '../../utils/request_settings';
 import MenuButton from "./MenuButton";
 import WordCloudDiagram from "./WordCloudDiagram";
 
@@ -18,13 +19,12 @@ function Navigator(props){
         const url = URLS['TablePanel'];
 
         // Redirect
-        // window.location.href = url
+        // {% window.location.href = url %}
         // Get table names
-        fetch(url)
-            .then(response => {//alert(response.status);
-                return (response.json()) })
+        fetch(url, requestSettings)
+            .then(response => response.json())
             .then(dat => {setMenures(dat); })
-            .catch(error => {console.error("Request error",error)});        
+            .catch(error => {console.error("Request error: ",error)});
     }, [])
 
 
@@ -41,10 +41,10 @@ function Navigator(props){
             const query_url = `${url}/${onshow}`;
 
             // Request table data
-            fetch(query_url)
+            fetch(query_url, requestSettings)
                 .then(response => response.json())
                 .then(dat => { setTableres(dat); })
-                .catch(error => {console.error("Request error",error)});
+                .catch(error => {console.error("Request error: ",error)});
         } else {
             setTableres({ success: false, status: "No table available."});
         }

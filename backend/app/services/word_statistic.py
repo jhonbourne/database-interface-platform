@@ -1,5 +1,5 @@
 import jieba
-from repositories.mysqlhelper import MySqlHelper
+from utils.mysqlhelper import MySqlHelper
 from repositories.database_info import *
 
 import os
@@ -25,8 +25,8 @@ class WordStatistic:
 
         self.data = []
         with MySqlHelper(user=user, password=pwd,
-                    database=get_database4src(path)) as dial:
-            data_, _ = dial.select(name, column_names=self.columns)
+                    database=get_database4src(path)) as conn:
+            data_, _ = conn.select(name, column_names=self.columns)
             self.data.append(data_)
 
         # Extract all string values from possibly multilevel nested lists/tuples
