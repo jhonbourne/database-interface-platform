@@ -1,12 +1,14 @@
 # database-interface-platform
 A platform for data query and visualization.
 ## Dependencies
+Developed in Windows.
 - python >= 3.8  
 - python dependencies:  
     pymysql (for MySQL interface)  
     lxml (for spider)  
     flask, flask_cors (for backend)  
     jieba (for wordclould function)
+    numpy, opencv-python (for image processing)
 
 - JavaScript dependencies:  
     Node.js (with NPM included)

@@ -5,4 +5,5 @@ export const URLS = {
     ,Register: '/user/register'
     ,Login: '/user/login'
     ,Logout: '/user/logout'
+    ,GetDigit: '/recognition/digit'
 }

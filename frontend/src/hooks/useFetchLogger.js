@@ -1,6 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom'; // redirect on certain conditions
 import shouldLogin from '../utils/shouldLogin';
+import { URLS } from '../utils/request_urls';
+import { requestSettings } from '../utils/request_settings';
 // NOTE: the logger is not necessarily needed, 
 // but it is convenient to log the requests for debugging
 
@@ -74,13 +76,15 @@ if (typeof window !== 'undefined' && typeof window.fetch === 'function' && !isFe
 
 /**
  * Hook that wraps window.fetch to log response status codes for all requests.
+ * Also performs an immediate authentication check on mount to trigger redirect if needed.
  *
  * @param {string} label - Helpful label to identify where the logger was installed.
  * @param {{ logger?: Function }} [options] - Optional logger; defaults to console.info.
  */
-export default function useFetchLogger(label = 'fetch-logger', options = {}) {
+export default function useFetchLogger(label = 'fetch-logger', authCheckURL = URLS['TablePanel'], options = {}) {
   const { logger = console.info } = options;
   const navigate = useNavigate();
+  const hasCheckedAuth = useRef(false);
 
   // Update module-level callbacks when hook mounts or values change
   useEffect(() => {
@@ -104,4 +108,24 @@ export default function useFetchLogger(label = 'fetch-logger', options = {}) {
       }
     }
   }, [logger, label, navigate]);
+
+  // Perform immediate authentication check on mount
+  useEffect(() => {
+    // Only check once per hook instance
+    if (hasCheckedAuth.current) {
+      return;
+    }
+    hasCheckedAuth.current = true;
+
+    // Make a fetch call to check authentication status
+    // This will trigger the redirect check in the wrapped fetch if user is not authenticated
+    // Using TablePanel endpoint as it requires authentication
+    if (authCheckURL && typeof window !== 'undefined' && typeof window.fetch === 'function') {
+      fetch(authCheckURL, requestSettings)
+        .catch(error => {
+          // Ignore errors - we're just checking authentication
+          // The redirect will be handled by the wrapped fetch if needed
+        });
+    }
+  }, []);
 }

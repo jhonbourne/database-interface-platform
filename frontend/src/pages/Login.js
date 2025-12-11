@@ -29,7 +29,7 @@ function Login() {
         .then(() => {
           // successful registration -> go to display board
           setFeedbackMessage(null);
-          navigate('/main');
+          navigate('/start');
         })
         .catch(error => {
           setFeedbackMessage(error.toString());

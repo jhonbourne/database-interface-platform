@@ -23,8 +23,9 @@ def create_app():
         # app.logger.error(f"Catch UserException: {str(error)}")  # 一定会打印
         return deal_service_info(error.formatted_mesage, False)
 
-    from .controller import data, user
+    from .controller import data, user, figure
     app.register_blueprint(user.bp)
     app.register_blueprint(data.bp)
+    app.register_blueprint(figure.bp)
 
     return app

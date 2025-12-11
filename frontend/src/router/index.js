@@ -3,6 +3,7 @@ import StartPage from "../pages/StartPage";
 import App from "../pages/App";
 import Register from "../pages/Register";
 import Login from "../pages/Login";
+import ImageProcesser from "../pages/ImageProcesser";
 
 const redirectLoginCode = 401;
 const redirectLoginMessage = "Access denied. Please log in first.";
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
     {
         path: "/main",
         element: <App />
+    },
+    {
+        path: "/getting-digit",
+        element: <ImageProcesser />
     },
     {
         path: "/user",
